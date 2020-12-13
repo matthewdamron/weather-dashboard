@@ -25,7 +25,7 @@
         <div class="row">
             <div class="col-3">
                 <form>
-                    <h3>Search for a City:</h3>
+                    <h4>Search for a City:</h4>
                     <div class="input-group">
                         <input class="form-control" type="text" placeholder="City" id="cityInput">
                         <button class="btn bg-info" id="citySearch"><i class="fas fa-search"></i></button>
@@ -34,8 +34,16 @@
                 <div id="pastSearchedCity"></div>
             </div>
             <div class="col-9">
-                <section class="currentWeather">
-
+                <section class="border currentWeather">
+                    <div class="p-3">
+                        <h2 class="d-inline" id="currentLocation"></h2>
+                        <h2 class="d-inline" id="currentDate"></h2>
+                        <img class="d-inline" id="currentIcon">
+                        <h4 id="currentTemp"></h4>
+                        <h4 id="currentHumidity"></h4>
+                        <h4 id="currentWind"></h4>
+                        <h4 id="currentUVI"></h4>
+                    </div>
                 </section>
             </div>
         </div>
