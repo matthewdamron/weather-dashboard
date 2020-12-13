@@ -8,17 +8,20 @@ var openAPIKey = '&appid=199161a7849c135f147382ffb92ba10d';
 var dateFormat = 'MM/DD/YYYY';
 var cityObj = [];
 
+// get elements for the current weather
 var currentLocationEl = document.getElementById('currentLocation');
 var currentDateEl = document.getElementById('currentDate');
-// var currentIconEl = document.getElementById('currentIcon');
 var currentTempEl = document.getElementById('currentTemp');
 var currentHumidityEl = document.getElementById('currentHumidity');
 var currentWindEl = document.getElementById('currentWind');
 var currentUVIEl = document.getElementById('currentUVI');
 
+// get elemet for the forecast weather
+var forecastCardsEl = document.getElementById('forecast-cards');
+
 var getCurrentWeather = function () {
     var currentUrl = openWeatherCurrentUrl + citySearch + openWeatherUnits + openAPIKey;
-    console.log(currentUrl);
+    // console.log(currentUrl);
     fetch(currentUrl)
         .then(function (currentResponse) {
             // request was successful
@@ -61,7 +64,7 @@ var getCurrentWeather = function () {
 
             // set currentUVIUrl to fetch UV index
             var currentUVIUrl = openWeatherUVI + '?lat=' + currentLat + '&lon=' + currentLon + openAPIKey;
-            console.log(currentUVIUrl);
+            // console.log(currentUVIUrl);
             fetch(currentUVIUrl)
                 .then(function (currentUVIResponse) {
                     if (currentUVIResponse.ok) {
@@ -81,27 +84,75 @@ var getCurrentWeather = function () {
         });
 };
 
-var setupCurrentWeather = function (currentResponse, currentUVIResponse) {
-
-};
-
 var getForecastWeather = function () {
-    var forecastUrl = openWeatherForecastUrl + citySearch + openAPIKey;
+    var forecastUrl = openWeatherForecastUrl + citySearch + openWeatherUnits + openAPIKey;
     console.log(forecastUrl);
     fetch(forecastUrl)
-        .then(function (response) {
+        .then(function (forecastResponse) {
             // request was successful
-            if (response.ok) {
-                console.log(response);
+            if (forecastResponse.ok) {
+                return forecastResponse.json();
+            }
+            else {
+                alert('Error: ' + forecastResponse.statusText);
+            }
+        })
+        .then(function (forecastResponse) {
+            console.log(forecastResponse);
+            for (var i = 0; i < forecastResponse.list.length; i+=8) {
+                // console.log(forecastResponse.list[i].dt_txt);
+                // var forecastDate = forecastResponse.dt_txt;
+                // var convertedDate = moment(forecastResponse.list[i].dt_txt).format(dateFormat);
+                // console.log(convertedDate);
 
-            } else {
-                alert('Error: ' + response.statusText);
+                // create forecast card
+                var forcastCard = $('<div>')
+                    .addClass('card');
+                
+                // get and set forecast date header
+                var convertedDate = moment(forecastResponse.list[i].dt_txt).format(dateFormat);
+                console.log(convertedDate);
+                var forecastHeader = $('<div>')
+                    .addClass('card-header')
+                    .text(convertedDate);
+
+                // get and set forecast icon
+                var weatherIcon = forecastResponse.list[i].weather[0].icon;
+                console.log(weatherIcon);
+                var forecastIcon = $('<img>')
+                    .addClass('card-title')
+                    .attr('src', openWeatherIconUrl + weatherIcon + '.png');
+
+                // get and set forecast temp
+                var weatherTemp = Math.floor(forecastResponse.list[i].main.temp);
+                console.log(weatherTemp);
+                var forecastTemp = $('<p>')
+                    .addClass('card-text')
+                    .text('Temperature: ' + weatherTemp + ' ' + String.fromCharCode(176) + 'F');
+
+                // get and set forecast humidity
+                var weatherHumidity = forecastResponse.list[i].main.humidity;
+                console.log(weatherHumidity);
+                var forecastHumidity = $('<p>')
+                    .addClass('card-text')
+                    .text('Humidity: ' + weatherHumidity + ' %');
+
+                // append items to card
+                forcastCard
+                    .append(forecastHeader)
+                    .append(forecastIcon)
+                    .append(forecastTemp)
+                    .append(forecastHumidity);
+
+                // append card to card group
+                $('#forecast-cards')
+                    .append(forcastCard);
             }
         })
         .catch(function (error) {
-            alert('Unable to connect to GitHub');
+            alert('Unable to connect to Weather API');
         });
 };
 
 getCurrentWeather();
-// getForecastWeather();
+getForecastWeather();
