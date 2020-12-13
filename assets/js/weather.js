@@ -20,6 +20,9 @@ var dateFormat = 'MM/DD/YYYY';
 var currentLat = '';
 var currentLon = '';
 
+// local storage
+var searchedCity = ['herriman'];
+
 // get elements for the current weather
 var currentLocationEl = document.getElementById('currentLocation');
 var currentDateEl = document.getElementById('currentDate');
@@ -27,7 +30,7 @@ var currentTempEl = document.getElementById('currentTemp');
 var currentHumidityEl = document.getElementById('currentHumidity');
 var currentWindEl = document.getElementById('currentWind');
 var currentUVIEl = document.getElementById('currentUVI');
-var cityInputEl = document.getElementById('cityInput').value;
+// var cityInputEl = document.getElementById('cityInput').value;
 
 // get element user-form
 var userFormEl = document.querySelector('#user-form');
@@ -37,7 +40,16 @@ var forecastCardsEl = document.getElementById('forecast-cards');
 
 var getCurrentWeather = function (event) {
     event.preventDefault();
-    var currentUrl = openWeatherCurrentUrl + citySearch + openWeatherUnits + openAPIKey;
+    $("#forecast-cards").html("");
+    var userInput = document.getElementById('cityInput').value;
+    if ($.inArray(userInput, searchedCity) != -1 ) {
+        console.log('yes');
+    }
+    else {
+        console.log('no');
+    }
+    console.log(userInput);
+    var currentUrl = openWeatherCurrentUrl + '?q=' + userInput + openWeatherUnits + openAPIKey;
     fetch(currentUrl)
         .then(function (currentResponse) {
             // request was successful

@@ -17,8 +17,6 @@
     <!-- navigation -->
     <header class="navbar text-light justify-content-center bg-info">
         <h1> Weather Dashboard</h1>
-        <button onclick="getCurrentWeather()">Click Me</button>
-        <button onclick="getCurrentWeather()" class="btn bg-info" id="citySearch"><i class="fas fa-search"></i></button>
     </header>
 
     <div class="mt-4 container">
@@ -27,7 +25,7 @@
                 <form id="user-form">
                     <h4>Search for a City:</h4>
                     <div class="input-group">
-                        <input name="cityInput" class="form-control" type="text" placeholder="City" id="cityInput">
+                        <input class="form-control" type="text" placeholder="City" id="cityInput">
                         <button class="btn bg-info" id="citySearch"><i class="fas fa-search"></i></button>
                     </div>
                 </form>
@@ -47,8 +45,7 @@
                     </div>
                 </section>
                 <h2>5-Day Forecast</h2>
-                <section class="row row-cols-1 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-4"
-                    id="forecast-cards">
+                <section class="row row-cols-1 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-4" id="forecast-cards">
                 </section>
 
             </div>
