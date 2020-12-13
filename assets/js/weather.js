@@ -1,5 +1,6 @@
 var openWeatherCurrentUrl = 'https://api.openweathermap.org/data/2.5/weather';
 var openWeatherForecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+var openWeatherOneCallUrl = 'https://api.openweathermap.org/data/2.5/onecall';
 var openWeatherUnits = '&units=imperial';
 var openWeatherUVI = 'https://api.openweathermap.org/data/2.5/uvi';
 var openWeatherIconUrl = 'https:///openweathermap.org/img/w/';
@@ -92,15 +93,14 @@ var getForecastWeather = function () {
             // request was successful
             if (forecastResponse.ok) {
                 return forecastResponse.json();
-            }
-            else {
+            } else {
                 alert('Error: ' + forecastResponse.statusText);
             }
         })
         .then(function (forecastResponse) {
             console.log(forecastResponse);
-            for (var i = 0; i < forecastResponse.list.length; i+=8) {
-                // console.log(forecastResponse.list[i].dt_txt);
+            for (var i = 0; i < forecastResponse.list.length; i += 8) {
+                console.log(forecastResponse.list[i].dt_txt);
                 // var forecastDate = forecastResponse.dt_txt;
                 // var convertedDate = moment(forecastResponse.list[i].dt_txt).format(dateFormat);
                 // console.log(convertedDate);
@@ -108,7 +108,7 @@ var getForecastWeather = function () {
                 // create forecast card
                 var forcastCard = $('<div>')
                     .addClass('card');
-                
+
                 // get and set forecast date header
                 var convertedDate = moment(forecastResponse.list[i].dt_txt).format(dateFormat);
                 console.log(convertedDate);
@@ -121,7 +121,9 @@ var getForecastWeather = function () {
                 console.log(weatherIcon);
                 var forecastIcon = $('<img>')
                     .addClass('card-title')
-                    .attr('src', openWeatherIconUrl + weatherIcon + '.png');
+                    .attr('src', openWeatherIconUrl + weatherIcon + '.png')
+                    .attr('width', '100px')
+                    .attr('height', '100px');
 
                 // get and set forecast temp
                 var weatherTemp = Math.floor(forecastResponse.list[i].main.temp);
@@ -154,5 +156,77 @@ var getForecastWeather = function () {
         });
 };
 
+var oneCallApi = function () {
+    var openWeatherOneCallUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=33.441792&lon=-94.037689&exclude=hourly,minutely,alerts&appid=199161a7849c135f147382ffb92ba10d';
+    console.log(openWeatherOneCallUrl);
+    fetch(openWeatherOneCallUrl)
+        .then(function (openWeatherOneCallResponse) {
+            // request was successful
+            if (openWeatherOneCallResponse.ok) {
+                return openWeatherOneCallResponse.json();
+            } else {
+                alert('Error: ' + openWeatherOneCallResponse.statusText);
+            }
+        })
+        .then(function (openWeatherOneCallResponse) {
+            console.log(openWeatherOneCallResponse);
+            for (var i = 1; i < openWeatherOneCallResponse.daily.length; i++) {
+                // console.log(forecastResponse.list[i].dt_txt)
+                // var forecastDate = forecastResponse.dt_txt;
+                // var convertedDate = moment(forecastResponse.list[i].dt_txt).format(dateFormat);
+                // console.log(convertedDate);
+
+                // create forecast card
+                var forcastCard = $('<div>')
+                    .addClass('card');
+
+                // get and set forecast date header
+                var convertedDate = moment.unix(openWeatherOneCallResponse.daily[i].dt).format(dateFormat);
+                console.log(convertedDate);
+                var forecastHeader = $('<div>')
+                    .addClass('card-header')
+                    .text(convertedDate);
+
+                // get and set forecast icon
+                var weatherIcon = openWeatherOneCallResponse.daily[i].weather[0].icon;
+                console.log(weatherIcon);
+                var forecastIcon = $('<img>')
+                    .addClass('card-title')
+                    .attr('src', openWeatherIconUrl + weatherIcon + '.png')
+                    .attr('width', '100px')
+                    .attr('height', '100px');
+
+                // get and set forecast temp
+                var weatherTemp = Math.floor(openWeatherOneCallResponse.daily[i].temp.day);
+                console.log(weatherTemp);
+                var forecastTemp = $('<p>')
+                    .addClass('card-text')
+                    .text('Temperature: ' + weatherTemp + ' ' + String.fromCharCode(176) + 'F');
+
+                // get and set forecast humidity
+                var weatherHumidity = openWeatherOneCallResponse.daily[i].humidity;
+                console.log(weatherHumidity);
+                var forecastHumidity = $('<p>')
+                    .addClass('card-text')
+                    .text('Humidity: ' + weatherHumidity + ' %');
+
+                // append items to card
+                forcastCard
+                    .append(forecastHeader)
+                    .append(forecastIcon)
+                    .append(forecastTemp)
+                    .append(forecastHumidity);
+
+                // append card to card group
+                $('#forecast-cards')
+                    .append(forcastCard);
+            }
+        })
+        .catch(function (error) {
+            alert('Unable to connect to Weather API');
+        });
+};
+
 getCurrentWeather();
-getForecastWeather();
+// getForecastWeather();
+oneCallApi();
