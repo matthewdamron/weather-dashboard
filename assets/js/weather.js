@@ -8,7 +8,7 @@ var openWeatherIconUrl = 'https:///openweathermap.org/img/w/';
 var openWeatherUnits = '&units=imperial';
 var openWeatherExclude = '&exclude=hourly,minutely,alerts'
 var openWeatherUVI = 'https://api.openweathermap.org/data/2.5/uvi';
-var citySearch = '?q=herriman';
+var citySearch = '';
 
 // OpenAPIKey
 var openAPIKey = '&appid=199161a7849c135f147382ffb92ba10d';
@@ -21,7 +21,7 @@ var currentLat = '';
 var currentLon = '';
 
 // local storage
-var searchedCity = ['herriman'];
+var searchedCity = [];
 
 // get elements for the current weather
 var currentLocationEl = document.getElementById('currentLocation');
@@ -30,26 +30,17 @@ var currentTempEl = document.getElementById('currentTemp');
 var currentHumidityEl = document.getElementById('currentHumidity');
 var currentWindEl = document.getElementById('currentWind');
 var currentUVIEl = document.getElementById('currentUVI');
-// var cityInputEl = document.getElementById('cityInput').value;
+var citySearchedEl = document.getElementById('citySearched');
 
 // get element user-form
-var userFormEl = document.querySelector('#user-form');
+var userFormEl = document.getElementById('citySearch');
+var searchedCityEl = document.getElementById('citySearched');
 
 // get elemet for the forecast weather cards
 var forecastCardsEl = document.getElementById('forecast-cards');
 
 var getCurrentWeather = function (event) {
-    event.preventDefault();
-    $("#forecast-cards").html("");
-    var userInput = document.getElementById('cityInput').value;
-    if ($.inArray(userInput, searchedCity) != -1 ) {
-        console.log('yes');
-    }
-    else {
-        console.log('no');
-    }
-    console.log(userInput);
-    var currentUrl = openWeatherCurrentUrl + '?q=' + userInput + openWeatherUnits + openAPIKey;
+    var currentUrl = openWeatherCurrentUrl + '?q=' + citySearch + openWeatherUnits + openAPIKey;
     fetch(currentUrl)
         .then(function (currentResponse) {
             // request was successful
@@ -122,7 +113,7 @@ var getCurrentWeather = function (event) {
                     }
                 })
                 .then(function (openWeatherOneCallResponse) {
-                    for (var i = 1; i < openWeatherOneCallResponse.daily.length-2; i++) {
+                    for (var i = 1; i < openWeatherOneCallResponse.daily.length - 2; i++) {
 
                         // create forecast card
                         var forcastCard = $('<div>')
@@ -173,4 +164,73 @@ var getCurrentWeather = function (event) {
         });
 };
 
-userFormEl.addEventListener('submit', getCurrentWeather);
+var loadTasks = function () {
+    // get itmes from localStorage
+    searchedCity = JSON.parse(localStorage.getItem('searchedCity'));
+
+    // if nothing in localStorage, create a new object to track all task status arrays
+    if (!searchedCity) {
+        searchedCity = []
+        return;
+    }
+
+    // loop through the items to place a button for each city
+    for (i = 0; i < searchedCity.length; i++) {
+        var cityBtn = $('<button>')
+            .addClass('btn bg-info m-1')
+            .attr('id', searchedCity[i])
+            .html(searchedCity[i]);
+
+        $('#citySearched')
+            .append(cityBtn);
+    }
+};
+
+var searchCity = function (event) {
+    event.preventDefault();
+    // console.log(event);
+    $('#forecast-cards').html('');
+    citySearch = document.getElementById('cityInput').value;
+    document.getElementById('cityInput').value = '';
+    if ($.inArray(citySearch, searchedCity) != -1) {
+        // console.log('yes');
+    } else {
+        var currentUrl = openWeatherCurrentUrl + '?q=' + citySearch + openWeatherUnits + openAPIKey;
+        fetch(currentUrl)
+            .then(function (currentResponse) {
+                // request was successful
+                if (currentResponse.ok) {
+                    // console.log('no');
+                    searchedCity.push(citySearch);
+                    localStorage.setItem('searchedCity', JSON.stringify(searchedCity));
+                    var cityBtn = $('<button>')
+                        .addClass('btn bg-info m-1')
+                        .attr('id', citySearch)
+                        .html(citySearch);
+
+                    $('#citySearched')
+                        .append(cityBtn);
+
+                    getCurrentWeather(event);
+                } else {
+                    location.reload();
+                    alert('Error: No City Found');
+                }
+            })
+    }
+
+};
+
+var searchedCityList = function (event) {
+    event.preventDefault();
+    var targetEl = event.target;
+    if (targetEl.matches('.btn')) {
+        var cityID = $(targetEl).attr('id');
+        citySearch = cityID;
+    }
+    getCurrentWeather(event);
+};
+
+userFormEl.addEventListener('click', searchCity);
+searchedCityEl.addEventListener('click', searchedCityList);
+loadTasks();
