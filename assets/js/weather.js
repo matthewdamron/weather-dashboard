@@ -40,6 +40,9 @@ var searchedCityEl = document.getElementById('citySearched');
 var forecastCardsEl = document.getElementById('forecast-cards');
 
 var getCurrentWeather = function (event) {
+    // clear element cards
+    $("#forecast-cards").html("");
+    // setup weather url
     var currentUrl = openWeatherCurrentUrl + '?q=' + citySearch + openWeatherUnits + openAPIKey;
     fetch(currentUrl)
         .then(function (currentResponse) {
@@ -97,7 +100,40 @@ var getCurrentWeather = function (event) {
                 .then(function (currentUVIResponse) {
                     // get and set current UV index
                     var currentUVI = currentUVIResponse.value;
-                    currentUVIEl.textContent = 'UV Index: ' + currentUVI;
+                    currentUVIEl.textContent = 'UV Index: ';
+                    // if uv index is low
+                    if (currentUVI < 3) {
+                        var currentUVIBadge = $('<span>')
+                        .addClass('badge rounded-pill bg-green')
+                        .text(currentUVI);
+                    }
+                    // if uv index is moderate
+                    else if (currentUVI >= 3 && currentUVI < 6) {
+                        var currentUVIBadge = $('<span>')
+                        .addClass('badge rounded-pill bg-yellow')
+                        .text(currentUVI);
+                    }
+                    // if uv index is high
+                    else if (currentUVI >= 6 && currentUVI < 8) {
+                        var currentUVIBadge = $('<span>')
+                        .addClass('badge rounded-pill bg-orange')
+                        .text(currentUVI);
+                    }
+                    // if uv index is very high
+                    else if (currentUVI >= 8 && currentUVI < 11) {
+                        var currentUVIBadge = $('<span>')
+                        .addClass('badge rounded-pill bg-red')
+                        .text(currentUVI);
+                    }
+                    // if uv index is extreme
+                    else if (currentUVI >= 11) {
+                        var currentUVIBadge = $('<span>')
+                        .addClass('badge rounded-pill bg-violet')
+                        .text(currentUVI);
+                    }
+                    // append pill badge to uv index
+                    $('#currentUVI')
+                        .append(currentUVIBadge);
                 })
         })
         // get and set forecast
@@ -224,11 +260,19 @@ var searchCity = function (event) {
 var searchedCityList = function (event) {
     event.preventDefault();
     var targetEl = event.target;
-    if (targetEl.matches('.btn')) {
+    if (targetEl.matches('.bg-info')) {
         var cityID = $(targetEl).attr('id');
         citySearch = cityID;
+        getCurrentWeather(event);
     }
-    getCurrentWeather(event);
+    else if (targetEl.matches('.btn-warning')){
+        clearLocalSotrage();
+    }
+};
+
+var clearLocalSotrage = function() {
+    localStorage.removeItem('searchedCity');
+    location.reload();
 };
 
 userFormEl.addEventListener('click', searchCity);
