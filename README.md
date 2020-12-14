@@ -1,12 +1,13 @@
 # Weather Dashboard
 
-A website to look up current weather for the cites searched.<br>
+A website to look up current weather for cites searched.<br>
 Website will save previous looked up location as an interaction button
 
 ## Description
 
-* User to look up location in the imput form
-* 
+* User to look up location from the input section.
+* User will be able to pull up previous looked up cities.
+* User will be able to clear previous looked up cities.
 
 ## Criteria
 
@@ -24,8 +25,8 @@ THEN I am again presented with current and future conditions for that city<br>
 
 ## Screenshots
 
-![Demo](assets/images/workdayschduler-screenshot.png)
-![Demo](assets/images/workdayschduler-screenshot2.png)
+![Demo](assets/images/blankWeather.png)
+![Demo](assets/images/filledWeather.png)
 
 ## Badges
 
@@ -33,4 +34,4 @@ THEN I am again presented with current and future conditions for that city<br>
 
 ## Deployment
 
-[Work Day Scheduler](https://matthewdamron.github.io/work-day-scheduler/)
+[Weather Dashboard](https://matthewdamron.github.io/weather-dashboard/)
